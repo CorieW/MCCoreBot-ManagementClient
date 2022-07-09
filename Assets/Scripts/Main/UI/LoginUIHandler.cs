@@ -3,18 +3,43 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
 using Newtonsoft.Json;
 
+[RequireComponent(typeof(UIDocument))]
 public class LoginUIHandler : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private LoginController _controller;
-    [SerializeField] private LoadingScreen _loadingScreen;
-    [SerializeField] private InputField _emailField;
-    [SerializeField] private InputField _passwordField;
-    [SerializeField] private Text _errorField;
-    [SerializeField] private Button _submitBtn;
+
+    private TextField _emailField;
+    private TextField _passwordField;
+    private Label _errorLabel;
+    private Button _submitBtn;
+
+    private void Awake()
+    {
+        if (!_controller) Debug.LogError("No controller reference.");
+    }
+
+    private void OnEnable()
+    {
+        VisualElement root = GetComponent<UIDocument>().rootVisualElement;
+        _emailField = root.Q<TextField>("emailInputField");
+        _passwordField = root.Q<TextField>("passwordInputField");
+        _errorLabel = root.Q<Label>("errorText");
+        _submitBtn = root.Q<Button>("submitButton");
+
+        // TODO: Change
+        _emailField.SetValueWithoutNotify("watson.corie@gmail.com");
+        _passwordField.SetValueWithoutNotify("Password123!");
+
+        // Register submit btn click event
+        _submitBtn.RegisterCallback<ClickEvent>(e => Login());
+        _submitBtn.RegisterCallback<KeyDownEvent>(e => {
+            if (e.keyCode == KeyCode.Return) Login();
+        });
+    }
 
     /// <summary>
     /// Passes the input values of the username and password to a login function in the AppController class.
@@ -26,13 +51,15 @@ public class LoginUIHandler : MonoBehaviour
         if (!EmailFieldLengthValidation() || !PasswordLengthValidation()) return;
 
         SetLoading(true);
+        _errorLabel.visible = false;
 
         MakeLoginRequest();
     }
 
     public void SetError(string error)
     {
-        _errorField.text = error;
+        _errorLabel.visible = true;
+        _errorLabel.text = error;
     }
 
     private async void MakeLoginRequest()
@@ -42,13 +69,15 @@ public class LoginUIHandler : MonoBehaviour
 
             string json = await response.Content.ReadAsStringAsync();
             Dictionary<string, string> values = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-            
-            _errorField.text = values["message"];
-        } catch (TaskCanceledException) {
-            _errorField.text = "Servers are busy, please try again later!";
+
+            // If the response hasn't got the status code OK (200), see what the server sent back.
+            if (response.StatusCode != System.Net.HttpStatusCode.OK) SetError(values["message"]);
+        } catch (TaskCanceledException)
+        {
+            SetError("Servers are busy, please try again later!");
         } catch (Exception)
         {
-            _errorField.text = "Something went wrong, please try again later!";
+            SetError("Something went wrong, please try again later!");
         }
 
         SetLoading(false);
@@ -58,7 +87,7 @@ public class LoginUIHandler : MonoBehaviour
     {
         if (_emailField.text.Length > 0) return true;
         
-        _errorField.text = "Enter an email address.";
+        SetError("Enter an email address.");
         return false;
     }
 
@@ -66,28 +95,27 @@ public class LoginUIHandler : MonoBehaviour
     {
         if (_passwordField.text.Length > 0) return true;
         
-        _errorField.text = "Enter a password.";
+        SetError("Enter a password.");
         return false;
     }
 
     private void SetLoading(bool loading)
     {
-        _loadingScreen.SetLoadingScreenVisibility(loading);
         SetFormInteractability(!loading);
     }
 
     private void SetFormInteractability(bool interactability)
     {
-        _emailField.interactable = interactability;
-        _passwordField.interactable = interactability;
-        _submitBtn.interactable = interactability;
+        _emailField.SetEnabled(interactability);
+        _passwordField.SetEnabled(interactability);
+        _submitBtn.SetEnabled(interactability);
     }
 
     /// <summary>
     /// Redirects to web page to subscribe to services.
     /// <para>Performed by UI button.</para>
     /// </summary>
-    public void CreateAnAccount()
+    public void OpenCreateAnAccount()
     {
         System.Diagnostics.Process.Start(URLHelper.GetAddress() + URLHelper.GetRouteStringOfRoute(WebsiteRouteEnum.Subscriptions));
     }

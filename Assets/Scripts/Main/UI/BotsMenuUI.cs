@@ -1,119 +1,128 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
-public class BotsMenuUI : MonoBehaviour
+public class BotsMenuUI
 {
     public static BotsMenuUI Instance;
 
-    [Header("Settings")]
-    [SerializeField] private Vector2 _extraListingStartPos = Vector2.zero;
-    [SerializeField] private Vector2 _listingStartPos = Vector2.zero;
-    [SerializeField] private Vector2 _extraListingGap = new Vector2(0, -110);
-    [SerializeField] private Vector2 _listingGap = new Vector2(0, 80);
+    private MainUIHandler _handler;
+    private Dictionary<int, BotListingUI> _clientIdentityToBotListingUI = new Dictionary<int, BotListingUI>();
 
-    [Header("References")]
-    [SerializeField] private RectTransform _extraListingsContentContainerRectTransform;
-    [SerializeField] private Transform _listingsContentContainerTransform;
-    [SerializeField] private ExtraBotListingUI _extraListingUIPrefab;
-    [SerializeField] private BotListingUI _listingUIPrefab;
+    // The root element of the bot menu
+    private VisualElement _root;
+    private VisualElement _botsContentContainer;
+    private Button _hideMenuButton;
 
-    private Dictionary<int, ExtraBotListingUI> _identityToExtraBotListingDict = new Dictionary<int, ExtraBotListingUI>();
-    private Dictionary<int, BotListingUI> _identityToBotListingDict = new Dictionary<int, BotListingUI>();
-
-    private float _defaultExtraContentContainerHeight;
-
-    #region Unity Methods
-
-    private void Awake()
+    public BotsMenuUI(MainUIHandler handler)
     {
         Instance = this;
+        this._handler = handler;
 
-        _defaultExtraContentContainerHeight = _extraListingsContentContainerRectTransform.sizeDelta.y;
+        _root = handler.Root.Q("botsMenu");
+        _botsContentContainer = _root.Q("unity-content-container");
+        _hideMenuButton = _root.Q<Button>("hideMenuButton");
+
+        // Register button events
+        _hideMenuButton.RegisterCallback<ClickEvent>(e => CloseMenu());
     }
-
-    #endregion
-
-    /// <summary>Adds the bot client listing to the bots menu.</summary>
-    public void AddBotListing(WebSocketBotClient botClient)
+    
+    public void OpenMenu()
     {
-        // Create regular listing
-        BotListingUI newListing = Instantiate(_listingUIPrefab, Vector3.zero, Quaternion.identity);
-        newListing.transform.SetParent(_listingsContentContainerTransform);
-
-        newListing.SetUsername(botClient.Username);
-
-        _identityToBotListingDict.Add(botClient.Identity, newListing);
-
-        // Create extra detail listing in menu
-        ExtraBotListingUI newExtraListing = Instantiate(_extraListingUIPrefab, Vector3.zero, Quaternion.identity);
-        newExtraListing.transform.SetParent(_extraListingsContentContainerRectTransform);
-
-        newExtraListing.SetUsername(botClient.Username);
-        newExtraListing.SetConnectedServerIP(botClient.ServerIP);
-
-        _identityToExtraBotListingDict.Add(botClient.Identity, newExtraListing);
-        
-        UpdateListingsUI();
+        _root.style.display = DisplayStyle.Flex;
     }
 
-    /// <summary>Removes the bot client listing from the bots menu.</summary>
+    private void CloseMenu()
+    {
+        _root.style.display = DisplayStyle.None;
+    }
+
+    public void AddBotListing(WebSocketBotClient client)
+    {
+        // Ensuring that it's ran on the Unity thread.
+        UnityThreadCommunicator.RunOnMainThread.Enqueue(() =>
+        {
+            // Get a copied version of the bot listing asset
+            VisualElement newBotListingUI = _handler.BotListingAsset.CloneTree();
+            // Add the bot listing to the menu's listings container
+            _botsContentContainer.Add(newBotListingUI);
+            // Add to the dictionary to keep track of the bot listing and to allow changes possibly later
+            _clientIdentityToBotListingUI.Add(client.Identity, new BotListingUI(newBotListingUI, client));
+        });
+    }
+
     public void RemoveBotListing(int identity)
     {
-        // Remove regular listing
-        BotListingUI listing = _identityToBotListingDict[identity];
-
-        _identityToExtraBotListingDict.Remove(identity);
-        Destroy(listing.gameObject);
-
-        // Remove extra detail listing
-        ExtraBotListingUI extraListing = _identityToExtraBotListingDict[identity];
-
-        _identityToExtraBotListingDict.Remove(identity);
-        Destroy(extraListing.gameObject);
-
-        UpdateListingsUI();
-    }
-
-    public void UpdateBotListing(WebSocketBotClient botClient)
-    {
-        ExtraBotListingUI listing = _identityToExtraBotListingDict[botClient.Identity];
-
-        listing.SetUsername(botClient.Username);
-        listing.SetConnectedServerIP(botClient.ServerIP);
-    }
-
-    private void UpdateListingsUI()
-    {
-        int i = 0;
-        foreach (BotListingUI listing in _identityToBotListingDict.Values)
+        // Ensuring that it's ran on the Unity thread.
+        UnityThreadCommunicator.RunOnMainThread.Enqueue(() =>
         {
-            listing.transform.localPosition = CalculateNextListingPosition(_listingStartPos, _listingGap, i);
-            i++;
-        }
-
-        i = 0;
-        foreach (ExtraBotListingUI listing in _identityToExtraBotListingDict.Values)
-        {
-            listing.transform.localPosition = CalculateNextListingPosition(_extraListingStartPos, _extraListingGap, i);
-            i++;
-        }
-
-        _extraListingsContentContainerRectTransform.sizeDelta = new Vector2(_extraListingsContentContainerRectTransform.sizeDelta.x, CalculateNextContentContainerHeight());
+            BotListingUI botListingUI = _clientIdentityToBotListingUI[identity];
+            // Remove the bot's UI from the menu's listings container
+            _botsContentContainer.Remove(botListingUI.VisualElement);
+            // Remove from the dictionary
+            _clientIdentityToBotListingUI.Remove(identity);
+        });
     }
 
-    /// <summary>Calculates the position for where the next bot listing should be positioned.</summary>
-    private Vector3 CalculateNextListingPosition(Vector2 startPos, Vector2 gap, int index)
+    private class BotListingUI
     {
-        return startPos + (gap * index);
-    }
+        private VisualElement _visualElement;
+        private WebSocketBotClient _client;
 
-    /// <summary>Calculate the size of the content container to fit the bot listings.</summary>
-    private float CalculateNextContentContainerHeight()
-    {
-        float height = Mathf.Abs(_extraListingGap.y) * _identityToExtraBotListingDict.Count;
+        private Label _usernameLabel;
+        private Label _mcVersionLabel;
+        private Label _serverLabel;
+        private Button _botDetailsButton;
+        private Button _goToBotButton;
         
-        return height > _defaultExtraContentContainerHeight ? height : _defaultExtraContentContainerHeight;
+        public VisualElement VisualElement { get { return _visualElement; } }
+        public string Username { set { _usernameLabel.text = value; } }
+        private string MCVersion { set { _mcVersionLabel.text = "Minecraft Version: " + value; } }
+        public string Server {
+            set {
+                if (value == null || value == "")
+                {
+                    _serverLabel.text = "Server: Not connected";
+                    _serverLabel.style.color = new Color(1, 0, 0);
+                }
+                else
+                {
+                    _serverLabel.text = "Server: " + value;
+                    _serverLabel.style.color = new Color(0, 1, 0);
+                }
+            }
+        }
+
+        public BotListingUI(VisualElement visualElement, WebSocketBotClient client)
+        {
+            this._visualElement = visualElement;
+            this._client = client;
+
+            _usernameLabel = visualElement.Q<Label>("usernameLabel");
+            _mcVersionLabel = visualElement.Q<Label>("mcVersionLabel");
+            _serverLabel = visualElement.Q<Label>("serverLabel");
+            _botDetailsButton = visualElement.Q<Button>("botDetailsButton");
+            _goToBotButton = visualElement.Q<Button>("goToBotButton");
+
+            // Set labels text
+            Username = client.Username;
+            MCVersion = client.MCClient.Version;
+            Server = client.ServerIP;
+
+            // Register button events
+            _botDetailsButton.RegisterCallback<ClickEvent>(e => OpenBotDetails());
+            _goToBotButton.RegisterCallback<ClickEvent>(e => GoToBot());
+        }
+
+        private void OpenBotDetails()
+        {
+            // Todo
+        }
+
+        private void GoToBot()
+        {
+            // Todo
+        }
     }
 }

@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="botDetailsMenu" src="project://database/Assets/UI/UXML/Menus/BotMenu/botDetailsMenu.uxml?fileID=9197481963319205126&amp;guid=fc1e55f3b6aa9114dad62eaceb52a94f&amp;type=3#botDetailsMenu" />
+    <ui:Template name="playerList" src="project://database/Assets/UI/UXML/Menus/BotMenu/PlayerList/playerList.uxml?fileID=9197481963319205126&amp;guid=0158eb3ea09d76b44b8da71e354d76e4&amp;type=3#playerList" />
+    <ui:VisualElement name="container" style="width: 400px; height: 100%; background-color: rgb(240, 240, 240);">
+        <ui:VisualElement name="navBarContainer" style="height: 50px; flex-direction: row; background-color: rgba(255, 255, 255, 0); border-bottom-width: 1px; border-left-color: rgb(200, 200, 200); border-right-color: rgb(200, 200, 200); border-top-color: rgb(200, 200, 200); border-bottom-color: rgb(200, 200, 200);">
+            <ui:Button text="Bot Details" display-tooltip-when-elided="true" name="openBotDetailsMenu" style="margin-left: 5px; margin-right: 0; margin-top: 0; margin-bottom: 0; padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px; height: 100%; border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0; width: auto; flex-basis: auto; background-color: rgb(200, 200, 200);" />
+            <ui:Button text="Player List" display-tooltip-when-elided="true" name="openPlayersListButton" style="margin-left: 5px; margin-right: 0; margin-top: 0; margin-bottom: 0; padding-left: 10px; padding-right: 10px; padding-top: 10px; padding-bottom: 10px; height: 100%; border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0; width: auto; flex-basis: auto; background-color: rgb(200, 200, 200);" />
+        </ui:VisualElement>
+        <ui:Instance template="botDetailsMenu" name="botDetailsMenu" style="display: none;" />
+        <ui:Instance template="playerList" name="playerList" style="display: none;" />
+    </ui:VisualElement>
+</ui:UXML>

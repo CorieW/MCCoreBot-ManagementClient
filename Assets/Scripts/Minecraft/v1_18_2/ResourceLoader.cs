@@ -45,6 +45,10 @@ namespace Minecraft.v1_18_2
             {
                 Registry.BlocksRegistry.Add(block);
             }
+
+            // This is added for incase a block blockstate can't be resolved
+            // Essentially an error block
+            Registry.BlocksRegistry.SetSafeReturnObject(GlobalUnresolvedResources.UNRESOLVED_BLOCK);
         }
 
         private void LoadBlockStates()
@@ -60,6 +64,8 @@ namespace Minecraft.v1_18_2
                     Registry.BlockStatesRegistry.Add(blockStateID, block);
                 }
             }
+            
+            Registry.BlockStatesRegistry.SetSafeReturnObject(GlobalUnresolvedResources.UNRESOLVED_BLOCK);
         }
     }
 }

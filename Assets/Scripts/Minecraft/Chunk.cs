@@ -5,10 +5,14 @@ namespace Minecraft
         public ChunkPos ChunkPos { get; set; }
         public int[] BlockStates { get; set; }
 
-        public void InsertValues(ChunkLoadMessageEventDataData data)
+        private Chunk() { }
+
+        public static Chunk Create(ChunkLoadMessageEventDataData data)
         {
-            this.ChunkPos = data.pos;
-            this.BlockStates = data.blockStates;
+            Chunk chunk = new Chunk();
+            chunk.ChunkPos = data.pos;
+            chunk.BlockStates = data.blockStates;
+            return chunk;
         }
     }
 }

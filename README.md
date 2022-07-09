@@ -1,9 +1,10 @@
 # Changes
-- Added login page.
-- Connects to websocket on login.
-- On websocket connection lost, 10 attempts are made to reconnect.
-- Failure to reconnect sends the user back to login page.
-- When the socket disconnects the user because of a bad session token, the user is returned to login.
-- Changed getter and setter function convention to properties convention.
-- Very simple chunk rendering.
-- A whole bunch of other things changed.
+- A lot of UI components designed.
+- Bots menu UI component partially implemented.
+- Some threading within the application.
+- Some code restructure.
+- Received chunks now generate.
+
+# Progress Screenshot
+https://gyazo.com/489200e4c7d5541012754ded785af8fd
+https://gyazo.com/4315dd0199fd437215d5b3360ddcee36

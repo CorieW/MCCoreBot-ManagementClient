@@ -1,0 +1,23 @@
+.submitButton {
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+
+    background-color: rgb(0, 200, 0);
+
+    border-width: 0;
+    border-left-color: unset;
+    border-top-color: unset;
+    border-right-color: unset;
+    border-bottom-color: unset;
+    border-radius: 0;
+}
+
+.submitButton:active {
+    background-color: rgb(0, 150, 0);
+}

@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="container" style="width: auto; height: 150px; margin-left: 5px; margin-right: 5px; margin-bottom: 5px; flex-direction: column; background-color: rgba(255, 255, 255, 255);">
+        <ui:VisualElement name="row" style="flex-direction: row; height: 100px;">
+            <ui:VisualElement name="usernameImage" style="width: 100px; height: 100px; background-color: rgba(229, 229, 229, 255);" />
+            <ui:VisualElement name="detailsContainer" style="flex-grow: 1; margin-left: 10px;">
+                <ui:Label text="BotUsername" display-tooltip-when-elided="true" name="usernameLabel" style="height: auto; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; padding-right: 0; padding-left: 0; padding-top: 0; padding-bottom: 0; -unity-text-align: middle-left; font-size: 20px; flex-grow: 2; color: rgba(15, 15, 15, 255);" />
+                <ui:Label text="Minecraft Version: 1.18.2" display-tooltip-when-elided="true" name="mcVersionLabel" style="height: auto; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; padding-right: 0; padding-left: 0; padding-top: 0; padding-bottom: 0; -unity-text-align: middle-left; font-size: 14px; color: rgba(15, 15, 15, 255); flex-grow: 1; white-space: normal;" />
+                <ui:Label text="Server: Not Connected" display-tooltip-when-elided="true" name="serverLabel" style="height: auto; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; padding-right: 0; padding-left: 0; padding-top: 0; padding-bottom: 0; -unity-text-align: middle-left; font-size: 14px; color: rgb(255, 0, 0); flex-grow: 1; white-space: normal;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="buttons" style="flex-grow: 1;">
+            <ui:Button text="Bot details" display-tooltip-when-elided="true" name="botDetailsButton" style="height: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; margin-left: 0; margin-right: 0; margin-top: 1px; margin-bottom: 0; border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0; flex-grow: 1; background-color: rgba(197, 197, 197, 255); color: rgba(15, 15, 15, 255);" />
+            <ui:Button text="Go to bot" display-tooltip-when-elided="true" name="goToBotButton" style="height: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; margin-left: 0; margin-right: 0; margin-top: 1px; margin-bottom: 0; border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0; flex-grow: 1; background-color: rgba(0, 200, 0, 255); color: rgba(15, 15, 15, 255);" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

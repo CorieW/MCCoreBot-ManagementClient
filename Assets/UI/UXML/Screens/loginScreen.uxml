@@ -1,0 +1,29 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/USS/loginTextField.uss?fileID=7433441132597879392&amp;guid=5c246cb7da3009a4a955569483c4c455&amp;type=3#loginTextField" />
+    <Style src="project://database/Assets/UI/USS/submitButton.uss?fileID=7433441132597879392&amp;guid=3ff49a5b75884b54db8d96c1cb6179c9&amp;type=3#submitButton" />
+    <ui:VisualElement style="width: 100%; height: 100%; cursor: initial;">
+        <ui:VisualElement style="min-height: 600px; width: 400px; margin-left: auto; margin-right: auto; margin-top: auto; margin-bottom: auto;">
+            <ui:VisualElement name="headerContainer" style="height: 100px; background-color: rgb(255, 255, 255); width: 100%; margin-left: auto; margin-right: auto; border-left-color: rgb(245, 245, 245); border-right-color: rgb(245, 245, 245); border-top-color: rgb(245, 245, 245); border-bottom-color: rgb(245, 245, 245); border-bottom-width: 2px;">
+                <ui:Label text="Login" display-tooltip-when-elided="true" style="font-size: 30px; -unity-text-align: middle-center; height: 100%; color: rgb(65, 65, 65); margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; -unity-font-style: bold;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="inputsContainer" class="unity-button" style="height: auto; flex-grow: 1; -unity-text-outline-color: rgb(255, 255, 255); background-color: rgb(255, 255, 255); width: 100%; margin-left: auto; margin-right: auto; padding-bottom: 25px; margin-top: 0; margin-bottom: 0; padding-left: 0; padding-right: 0; padding-top: 0; border-left-width: 0; border-right-width: 0; border-top-width: 0; border-bottom-width: 0;">
+                <ui:VisualElement style="margin-top: auto; margin-bottom: auto;">
+                    <ui:VisualElement name="emailContainer" style="height: auto; margin-top: 0; width: 75%; margin-left: auto; margin-right: auto;">
+                        <ui:Label text="Email" display-tooltip-when-elided="true" style="width: 100%; margin-left: 0; margin-right: 0; font-size: 20px; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; margin-bottom: 0; margin-top: 0; -unity-text-align: middle-left;" />
+                        <ui:TextField picking-mode="Ignore" name="emailInputField" max-length="320" tabindex="1" class="login-base-field" style="width: 100%; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; height: 40px; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="passwordContainer" style="height: auto; margin-top: 40px; margin-left: auto; margin-right: auto; width: 75%;">
+                        <ui:Label text="Password" display-tooltip-when-elided="true" style="width: 100%; margin-left: 0; margin-right: 0; font-size: 20px; margin-top: 0; margin-bottom: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; -unity-text-align: middle-left;" />
+                        <ui:TextField picking-mode="Ignore" name="passwordInputField" password="true" max-length="256" tabindex="2" usage-hints="None" class="login-base-field" style="width: auto; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; height: 40px; opacity: 1; display: flex; visibility: visible;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="errorContainer" style="height: 100px; margin-top: 25px; margin-left: auto; margin-right: auto; width: 75%; flex-direction: column-reverse;">
+                        <ui:Label text="Loading..." display-tooltip-when-elided="true" name="errorText" enable-rich-text="true" style="color: rgb(255, 0, 0); font-size: 15px; white-space: normal; -unity-text-align: middle-center; border-left-color: rgb(255, 0, 0); border-right-color: rgb(255, 0, 0); border-top-color: rgb(255, 0, 0); border-bottom-color: rgb(255, 0, 0); border-left-width: 1px; border-right-width: 1px; border-top-width: 0; border-bottom-width: 0; visibility: hidden; display: flex; height: auto; max-height: 100px; margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; padding-left: 5px; padding-right: 5px; padding-top: 10px; padding-bottom: 10px;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="submitContainer" style="height: auto; margin-top: 25px; margin-left: auto; margin-right: auto; width: 75%;">
+                        <ui:Button text="Login" display-tooltip-when-elided="false" tabindex="3" name="submitButton" class="submitButton" style="margin-left: 0; margin-right: 0; margin-top: 0; margin-bottom: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; height: 50px; width: 100%; font-size: 20px;" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -6,6 +6,8 @@ namespace Minecraft
 {
     public interface IMinecraftClient
     {
-        
+        public string Version { get; }
+        public IRegistry Registry { get; }
+        public AbstractChunkRenderer ChunkRenderer { get; }
     }
 }

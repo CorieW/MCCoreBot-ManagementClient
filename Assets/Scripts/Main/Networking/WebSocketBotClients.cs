@@ -26,7 +26,8 @@ public class WebSocketBotClients
         _clients.Add(client);
 
         // Handle UI changes
-        UnityThreadCommunicator.RunOnMainThread.Enqueue(() => BotsMenuUI.Instance.AddBotListing(client));
+        SimpleBotsMenuUI.Instance.AddBotListing(client);
+        BotsMenuUI.Instance.AddBotListing(client);
     }
 
     public void RemoveByIdentity(int identity)
@@ -41,7 +42,8 @@ public class WebSocketBotClients
         }
 
         // Handle UI changes
-        UnityThreadCommunicator.RunOnMainThread.Enqueue(() => BotsMenuUI.Instance.RemoveBotListing(identity));
+        SimpleBotsMenuUI.Instance.RemoveBotListing(identity);
+        BotsMenuUI.Instance.RemoveBotListing(identity);
     }
 
     public WebSocketBotClient GetByIdentity(int identity)

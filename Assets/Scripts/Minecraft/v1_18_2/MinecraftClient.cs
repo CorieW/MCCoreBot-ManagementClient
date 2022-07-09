@@ -10,12 +10,16 @@ namespace Minecraft.v1_18_2
     /// </summary>
     public class MinecraftClient : IMinecraftClient
     {
+        public static MinecraftClient Instance;
+
         public string Version { get; }
-        public Registry Registry { get; }
-        public ChunkRenderer ChunkRenderer { get; }
+        public IRegistry Registry { get; }
+        public AbstractChunkRenderer ChunkRenderer { get; }
 
         public MinecraftClient()
         {
+            Instance = this;
+
             this.Version = "1.18.2";
 
             ResourceLoader resourceLoader = new ResourceLoader(this.Version);

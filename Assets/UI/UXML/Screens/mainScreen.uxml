@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="BotsList" src="project://database/Assets/UI/UXML/Menus/SimpleBotsMenu/simpleBotsMenu.uxml?fileID=9197481963319205126&amp;guid=42c3e9bbe21ed6347b39cb74a7396b2d&amp;type=3#simpleBotsMenu" />
+    <ui:Template name="ArrowButtonList" src="project://database/Assets/UI/UXML/Menus/BotsMenu/botsMenu.uxml?fileID=9197481963319205126&amp;guid=8825f56701c256542b043ce068327b1f&amp;type=3#botsList" />
+    <ui:Template name="botMenu" src="project://database/Assets/UI/UXML/Menus/BotMenu/botMenu.uxml?fileID=9197481963319205126&amp;guid=68fb4aabc56c3794b90433586818fd22&amp;type=3#botMenu" />
+    <ui:Instance template="BotsList" name="simpleBotsMenu" style="position: absolute; right: 0; height: 100%;" />
+    <ui:Instance template="ArrowButtonList" name="botsMenu" style="position: absolute; right: 0; top: 0; height: 100%; width: 400px; display: none;" />
+    <ui:Instance template="botMenu" name="botMenu" style="position: absolute; height: 100%; display: none;" />
+</ui:UXML>

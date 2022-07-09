@@ -4,104 +4,99 @@ using Minecraft;
 
 namespace Minecraft.v1_18_2
 {
-    public class ChunkRenderer : IChunkRenderer
+    public class ChunkRenderer : AbstractChunkRenderer
     {
-        private Material _material;
+        public static int CHUNK_HEIGHT = 384;
 
-        private Queue<Chunk> _in;
-        private Chunk _current;
+        public ChunkRenderer() : base()
+        { }
 
-        public void Setup(Material material)
+        private Block[,,] ConvertBlockStateArrayToBlockMap(int[] blockStates)
         {
-            _material = material;
-            _in = new Queue<Chunk>();
+            Block[,,] blocks = new Block[CHUNK_WIDTH_N_LENGTH, CHUNK_HEIGHT, CHUNK_WIDTH_N_LENGTH];
+
+            for (int y = 0, i = 0; y < CHUNK_HEIGHT; y++)
+            {
+                for (int z = 0; z < CHUNK_WIDTH_N_LENGTH; z++)
+                {
+                    for (int x = 0; x < CHUNK_WIDTH_N_LENGTH; x++, i++)
+                    {
+                        blocks[x, y, z] = Registry.Instance.BlockStatesRegistry.SafeGetObjectFor(blockStates[i]);
+                    }
+                }
+            }
+
+            return blocks;
         }
 
-        public void QueueChunk(Chunk chunk)
+        protected override ChunkMeshData GenerateChunkMeshData(int[] blockStates)
         {
-            _in.Enqueue(chunk);
-        }
+            Block[,,] blocks = ConvertBlockStateArrayToBlockMap(blockStates);
 
-        private GameObject RenderChunk(Chunk chunk)
-        {
-            return null;
-            // int xSize = blocks.GetLength(0) - 1;
-            // int zSize = blocks.GetLength(1) - 1;
+            int xSize = blocks.GetLength(0) - 1;
+            int zSize = blocks.GetLength(1) - 1;
 
-            // GameObject newMeshObject = new GameObject($"Chunk ({chunkPos.x}, {chunkPos.z})");
-            // Vector2Int totalPos = new Vector2Int(chunkPos.x * blocks.GetLength(0), chunkPos.z * blocks.GetLength(2));
-            // newMeshObject.transform.position = new Vector3Int(totalPos.x, 0, totalPos.y);
-            // MeshRenderer mr = newMeshObject.AddComponent<MeshRenderer>();
-            // mr.material = _material;
-            // MeshFilter mf = newMeshObject.AddComponent<MeshFilter>();
+            List<Vector3> vertices = new List<Vector3>();
 
-            // List<Vector3> vertices = new List<Vector3>();
+            for (int y = 0; y < blocks.GetLength(1); y++)
+            {
+                for (int z = 0; z < blocks.GetLength(2); z++)
+                {
+                    for (int x = 0; x < blocks.GetLength(0); x++)
+                    {
+                        Block block = blocks[x, y, z];
+                        Vector3Int currPos = new Vector3Int(x, y, z);
 
-            // for (int y = 0; y < blocks.GetLength(1); y++)
-            // {
-            //     for (int z = 0; z < blocks.GetLength(2); z++)
-            //     {
-            //         for (int x = 0; x < blocks.GetLength(0); x++)
-            //         {
-            //             int blockID = blocks[x, y, z];
-            //             Vector3Int currPos = new Vector3Int(x, y, z);
+                        Vector3Int[] directions = new Vector3Int[]
+                        {
+                            new Vector3Int(-1, 0, 0),
+                            new Vector3Int(1, 0, 0),
+                            new Vector3Int(0, -1, 0),
+                            new Vector3Int(0, 1, 0),
+                            new Vector3Int(0, 0, -1),
+                            new Vector3Int(0, 0, 1)
+                        };
 
-            //             Vector3Int[] directions = new Vector3Int[]
-            //             {
-            //                 new Vector3Int(-1, 0, 0),
-            //                 new Vector3Int(1, 0, 0),
-            //                 new Vector3Int(0, -1, 0),
-            //                 new Vector3Int(0, 1, 0),
-            //                 new Vector3Int(0, 0, -1),
-            //                 new Vector3Int(0, 0, 1)
-            //             };
+                        if (block.displayName.Contains("Air")) continue;
 
-            //             if (blockID == 0) continue;
+                        // Look in each direction, if the direction is transparent, then set face.
+                        for (int i = 0; i < directions.Length; i++)
+                        {
+                            Vector3Int posToLookAt = new Vector3Int(x, y, z) + directions[i];
 
-            //             for (int i = 0; i < directions.Length; i++)
-            //             {
-            //                 Vector3Int posToLookAt = new Vector3Int(x, y, z) + directions[i];
+                            bool transparentInDirection;
 
-            //                 int blockIDInDirection;
-            //                 // Out of bounds
-            //                 // ! Blocks on chunk edge may not have faces.
-            //                 if (!posToLookAt.Within(Vector3Int.zero, new Vector3Int(blocks.GetLength(0) - 1, blocks.GetLength(1) - 1, blocks.GetLength(2) - 1))) blockIDInDirection = 0;
-            //                 else blockIDInDirection = blocks[posToLookAt.x, posToLookAt.y, posToLookAt.z];
+                            // Out of bounds
+                            if (!posToLookAt.Within(Vector3Int.zero, new Vector3Int(blocks.GetLength(0) - 1, blocks.GetLength(1) - 1, blocks.GetLength(2) - 1))) transparentInDirection = block.displayName.Contains("Air");
+                            else transparentInDirection = blocks[posToLookAt.x, posToLookAt.y, posToLookAt.z].displayName.Contains("Air");
 
-            //                 // If air
-            //                 if (blockIDInDirection == 0)
-            //                 {
-            //                     Vector3[] faceVerts = FaceCalculator.CalculateVertices(directions[i]);
-            //                     if (faceVerts == null || faceVerts.Length == 0) continue;
+                            // If transparent
+                            if (transparentInDirection)
+                            {
+                                Vector3[] faceVerts = FaceCalculator.CalculateVertices(directions[i]);
+                                if (faceVerts == null || faceVerts.Length == 0) continue;
 
-            //                     vertices.Add(new Vector3(x, y, z) + faceVerts[0]);
-            //                     vertices.Add(new Vector3(x, y, z) + faceVerts[1]);
-            //                     vertices.Add(new Vector3(x, y, z) + faceVerts[2]);
-            //                     vertices.Add(new Vector3(x, y, z) + faceVerts[3]);
-            //                     vertices.Add(new Vector3(x, y, z) + faceVerts[4]);
-            //                     vertices.Add(new Vector3(x, y, z) + faceVerts[5]);
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }
+                                vertices.Add(new Vector3(x, y, z) + faceVerts[0]);
+                                vertices.Add(new Vector3(x, y, z) + faceVerts[1]);
+                                vertices.Add(new Vector3(x, y, z) + faceVerts[2]);
+                                vertices.Add(new Vector3(x, y, z) + faceVerts[3]);
+                                vertices.Add(new Vector3(x, y, z) + faceVerts[4]);
+                                vertices.Add(new Vector3(x, y, z) + faceVerts[5]);
+                            }
+                        }
+                    }
+                }
+            }
 
-            // int[] triangles = new int[vertices.Count];
-            // // Vector2[] uv = new Vector2[vertices.Length];
+            int[] triangles = new int[vertices.Count];
+            // Vector2[] uv = new Vector2[vertices.Length];
 
-            // for (int i = 0; i < triangles.Length; i++)
-            // {
-            //     triangles[i] = i;
-            // }
+            for (int i = 0; i < triangles.Length; i++)
+            {
+                triangles[i] = i;
+            }
 
-            // Mesh mesh = mf.mesh = new Mesh();
-            // mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
-            // mesh.vertices = vertices.ToArray();
-            // mesh.triangles = triangles;
-            // // mesh.uv = uv;
-            // mesh.RecalculateNormals();
-            
-            // return newMeshObject;
+            return new ChunkMeshData(vertices.ToArray(), triangles, null);
         }
 
         /// <summary> Used to calcuate the vertices for given face directions. </summary>
